@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TaskMaster Simples</title>
+    <!-- Link para nosso arquivo CSS (vamos criar no próximo passo) -->
+    <link rel="stylesheet" href="/styles.css"> 
+</head>
+<body>
+    <h1>Minhas Tarefas</h1>
+
+    <div class="lista-tarefas">
+        <!-- Verifica se há tarefas na lista (se o array não está vazio) -->
+        <% if (listaDeTarefas.length > 0) { %>
+            <ul>
+                <!-- Itera sobre cada tarefa no array 'listaDeTarefas' -->
+                <% listaDeTarefas.forEach(function(tarefa) { %>
+                    <!-- Exibe a descrição de cada tarefa em um item de lista -->
+                    <li><%= tarefa.descricao %></li>
+                <% }); %>
+            </ul>
+        <% } else { %>
+            <!-- Mensagem exibida se não houver tarefas cadastradas -->
+            <p>Nenhuma tarefa cadastrada ainda. Adicione uma!</p>
+        <% } %>
+    </div>
+
+    <!-- Formulário básico para adicionar nova tarefa (ainda não funcional neste degrau) -->
+    <form action="/adicionar-tarefa" method="POST">
+        <input type="text" name="novaTarefa" placeholder="Digite uma nova tarefa" required>
+        <button type="submit">Adicionar</button>
+    </form>
+
+</body>
+</html>
