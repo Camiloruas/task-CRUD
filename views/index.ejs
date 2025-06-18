@@ -4,33 +4,68 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TaskMaster Simples</title>
-    <!-- Link para nosso arquivo CSS (vamos criar no próximo passo) -->
-    <link rel="stylesheet" href="/styles.css"> 
+    <link rel="stylesheet" href="/styles.css">
 </head>
 <body>
     <h1>Minhas Tarefas</h1>
 
     <div class="lista-tarefas">
-        <!-- Verifica se há tarefas na lista (se o array não está vazio) -->
         <% if (listaDeTarefas.length > 0) { %>
             <ul>
-                <!-- Itera sobre cada tarefa no array 'listaDeTarefas' -->
                 <% listaDeTarefas.forEach(function(tarefa) { %>
-                    <!-- Exibe a descrição de cada tarefa em um item de lista -->
-                    <li><%= tarefa.descricao %></li>
+                    <li>
+                        <!-- Área da Descrição da Tarefa -->
+                        <div class="task-description-area">
+                            <!-- AGORA É UM TEXTAREA! -->
+                            <textarea name="novaDescricao" class="input-edicao" readonly form="edit-form-<%= tarefa.id %>"><%= tarefa.descricao %></textarea>
+                        </div>
+
+                        <!-- Container para os botões de Ação (Editar e Excluir) -->
+                        <div class="task-actions">
+                            <!-- Formulário para Editar Tarefa -->
+                            <form id="edit-form-<%= tarefa.id %>" action="/atualizar-tarefa" method="POST" class="form-editar">
+                                <input type="hidden" name="idTarefa" value="<%= tarefa.id %>">
+                                <button type="submit" class="btn-editar">Editar</button>
+                            </form>
+
+                            <!-- Formulário para Excluir Tarefa -->
+                            <form action="/excluir-tarefa" method="POST" class="form-excluir">
+                                <input type="hidden" name="idTarefa" value="<%= tarefa.id %>">
+                                <button type="submit" class="btn-excluir">Excluir</button>
+                            </form>
+                        </div>
+                    </li>
                 <% }); %>
             </ul>
         <% } else { %>
-            <!-- Mensagem exibida se não houver tarefas cadastradas -->
             <p>Nenhuma tarefa cadastrada ainda. Adicione uma!</p>
         <% } %>
     </div>
 
-    <!-- Formulário básico para adicionar nova tarefa (ainda não funcional neste degrau) -->
-    <form action="/adicionar-tarefa" method="POST">
+    <!-- Formulário para adicionar nova tarefa (fora da lista de tarefas) -->
+    <form action="/adicionar-tarefa" method="POST" class="form-adicionar-tarefa">
         <input type="text" name="novaTarefa" placeholder="Digite uma nova tarefa" required>
         <button type="submit">Adicionar</button>
     </form>
 
+    <!-- Script JavaScript para lidar com o modo de edição (Mantido, funciona com textarea) -->
+    <script>
+        document.querySelectorAll('.btn-editar').forEach(button => {
+            button.addEventListener('click', (event) => {
+                const form = button.closest('.form-editar');
+                const taskId = form.querySelector('input[name="idTarefa"]').value;
+                const inputEdicao = document.querySelector(`.input-edicao[form="edit-form-${taskId}"]`);
+
+                if (button.textContent === 'Editar') {
+                    event.preventDefault();
+                    inputEdicao.removeAttribute('readonly');
+                    inputEdicao.focus();
+                    button.textContent = 'Salvar';
+                } else {
+                    // O formulário será enviado automaticamente
+                }
+            });
+        });
+    </script>
 </body>
 </html>

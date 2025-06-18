@@ -20,10 +20,10 @@ const db = new pg.Client({
 
 db.connect();
 
-
 app.set('view engine', 'ejs');
 app.set('views', path.join(process.cwd(), 'views'));
 app.use(express.static("public"));
+app.use(bodyParser.urlencoded({ extended: true }));
 
 
 app.get("/", async (req , res ) => {
@@ -36,6 +36,51 @@ app.get("/", async (req , res ) => {
         res.status(500).send("Erro ao carregar as tarefas do banco de dados.");
     }
 })
+
+app.post("/adicionar-tarefa", async (req , res)=> {
+
+   const input = req.body.novaTarefa;
+    try{
+        await db.query("INSERT INTO tarefas (descricao) VALUES ($1)", [input] ) 
+        res.redirect("/");
+
+    } catch(erro) {
+        console.error("Erro ao adicionar Tarefa:", erro);
+        res.status(500).send("Erro ao adicionar a Tarefa.")
+    }
+})
+
+
+app.post("/excluir-tarefa", async (req , res)=> {
+
+   const idDelete = req.body.idTarefa;
+    try{
+        await db.query("DELETE FROM tarefas WHERE id = $1;", [idDelete] ) 
+        res.redirect("/");
+
+    } catch(erro) {
+        console.error("Erro ao deletar Tarefa:", erro);
+        res.status(500).send("Erro ao deletar Tarefa.")
+    }
+})
+
+
+app.post("/atualizar-tarefa", async (req , res)=> {
+
+   const idAtualizar = req.body.idTarefa;
+   const newDescription = req.body.novaDescricao;
+
+    try{
+        await db.query("UPDATE tarefas SET descricao = $1 WHERE id = $2;", [newDescription, idAtualizar]);
+        res.redirect("/");
+
+    } catch(erro) {
+        console.error("Erro ao deletar Tarefa:", erro);
+        res.status(500).send("Erro ao deletar Tarefa.")
+    }
+})
+
+
 
 app.listen(port , ()=> {
     console.log(`Servidor Rodando na porta ${port}` )

@@ -1,79 +1,234 @@
+/* Import Tailwind CSS */
+/* Note: Tailwind is not actually loaded via script in EJS, but these classes might be intended for reference. */
+/* For this project, we'll focus on the custom CSS below. */
+/* @import url('https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css'); */
+
+/* Custom global styles */
 body {
-    font-family: 'Arial', sans-serif;
-    background-color: #f4f4f4;
-    color: #333;
-    margin: 20px;
+    background: linear-gradient(135deg, #e0e7ff, #e9d5ff); /* Gradiente de fundo suave */
+    min-height: 100vh; /* Ocupa a altura total da viewport */
     display: flex;
     flex-direction: column;
-    align-items: center;
-    min-height: 100vh;
+    align-items: center; /* Centraliza o conteúdo horizontalmente */
+    padding: 1.5rem; /* Espaçamento geral */
+    font-family: 'Inter', sans-serif; /* Fonte moderna */
+    color: #333; /* Cor de texto padrão */
 }
 
+/* Title styling */
 h1 {
-    color: #0056b3;
-    margin-bottom: 30px;
+    color: #4f46e5; /* Azul primário para o título */
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 2rem;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Sombra suave no texto */
 }
 
+/* Task list container */
 .lista-tarefas {
-    background-color: #fff;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba[Image of box shadow]a(0, 0, 0, 0.1);
+    background: white;
+    border-radius: 1rem; /* Cantos mais arredondados */
+    padding: 1.5rem;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1); /* Sombra mais proeminente */
     width: 100%;
-    max-width: 500px;
-    margin-bottom: 20px;
+    max-width: 32rem; /* Largura máxima para centralização */
+    transition: transform 0.3s ease; /* Transição suave para hover */
 }
 
+.lista-tarefas:hover {
+    transform: translateY(-5px); /* Efeito de elevação no hover */
+}
+
+/* Task list items - AQUI ESTÃO OS AJUSTES PARA O OVERFLOW DO TEXTAREA */
 ul {
     list-style: none;
     padding: 0;
 }
 
 li {
-    background-color: #e9ecef;
-    margin-bottom: 10px;
-    padding: 10px 15px;
-    border-radius: 5px;
     display: flex;
-    justify-content: space-between;
-    align-items: center;
+    flex-direction: column; /* Organiza os filhos um abaixo do outro */
+    align-items: flex-start; /* Alinha os filhos à esquerda */
+    background: #f9fafb; /* Fundo mais claro para cada tarefa */
+    padding: 1rem;
+    margin-bottom: 0.75rem;
+    border-radius: 0.5rem;
+    border-left: 4px solid #4f46e5;
+    transition: all 0.2s ease;
+    gap: 0.5rem; /* Espaço entre a área da descrição e a área dos botões */
+    width: 100%; /* Ocupa a largura total para ter espaço para alinhamento interno */
+    box-sizing: border-box; /* Adicionado para garantir que padding e border sejam incluídos na largura */
+    /* overflow: hidden; /* **Adicionado:** Oculta qualquer conteúdo que transborde as bordas do LI */
+    position: relative; /* Necessário para posicionamento absoluto de elementos internos, se houver */
 }
 
-form {
-    background-color: #fff;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba[Image of box shadow]a(0, 0, 0, 0.1);
-    width: 100%;
-    max-width: 500px;
-    display: flex;
-    gap: 10px;
+li:hover {
+    background: #eef2ff;
+    transform: translateX(5px);
 }
 
-input[type="text"] {
-    flex-grow: 1;
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
+/* Área da Descrição da Tarefa */
+.task-description-area {
+    width: 100%; /* Garante que esta área ocupe toda a largura disponível */
+    box-sizing: border-box; /* Garante que padding e border sejam incluídos na largura */
+}
+
+/* Input de edição da tarefa - AJUSTES CHAVE AQUI PARA O OVERFLOW */
+.input-edicao {
+    width: 100%; /* Ocupa a largura total de sua área pai */
+    padding: 0.75rem;
+    border: 2px solid transparent;
+    border-radius: 0.5rem;
     font-size: 1rem;
+    background: transparent;
+    min-height: 3rem;
+    height: auto;
+    resize: vertical;
+    overflow-y: auto; /* Adiciona barra de rolagem se o conteúdo exceder a altura */
+    outline: none;
+    transition: all 0.3s ease;
+    color: #333;
+    line-height: 1.5;
+    box-sizing: border-box; /* **Importante:** Inclui padding e border na largura total */
+}
+
+.input-edicao[readonly] {
+    cursor: pointer;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    /* Ajuste para que o texto não tenha padding interno quando readonly */
+    padding-left: 0;
+    padding-right: 0;
+    border-width: 0; /* Remove a borda totalmente */
+}
+
+.input-edicao:focus {
+    border-color: #4f46e5;
+    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+    background: white;
+    /* Restaura o padding e borda quando em foco */
+    padding: 0.75rem;
+    border-width: 2px;
+}
+
+/* Container para os botões de ação */
+.task-actions {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    justify-content: flex-end;
+    width: 100%;
+    flex-shrink: 0;
+}
+
+/* Formulário para adicionar tarefas (Geral) */
+form.form-adicionar-tarefa {
+    display: flex;
+    gap: 0.75rem;
+    width: 100%;
+    max-width: 32rem;
+    margin-top: 1.5rem;
+    background-color: white;
+    padding: 1.5rem;
+    border-radius: 1rem;
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.08);
+    box-sizing: border-box; /* Adicionado */
+}
+
+/* Input de texto geral (para adicionar tarefa) */
+form.form-adicionar-tarefa input[type="text"] {
+    flex: 1;
+    padding: 0.75rem;
+    border: 2px solid #d1d5db;
+    border-radius: 0.5rem;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    background: white;
+    box-sizing: border-box; /* Adicionado */
+}
+
+form.form-adicionar-tarefa input[type="text"]:focus {
+    border-color: #4f46e5;
+    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+    outline: none;
+}
+
+form.form-adicionar-tarefa input[type="text"]::placeholder {
+    color: #9ca3af;
+}
+
+/* Estilo geral para todos os botões */
+button {
+    padding: 0.75rem 1.25rem;
+    border-radius: 0.5rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: none;
+    color: white;
+    min-width: 6rem;
+    box-sizing: border-box; /* Adicionado */
 }
 
 button[type="submit"] {
-    padding: 10px 15px;
-    background-color: #007bff;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 1rem;
-    transition: background-color 0.3s ease;
+    background: #4f46e5;
 }
 
 button[type="submit"]:hover {
-    background-color: #0056b3;
+    background: #4338ca;
+    transform: translateY(-2px);
 }
 
-p {
-    font-style: italic;
-    color: #666;
+/* Estilos específicos dos botões Editar e Excluir */
+.form-editar,
+.form-excluir {
+    background-color: transparent;
+    box-shadow: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: auto;
+    box-sizing: border-box; /* Adicionado */
+}
+
+.btn-editar,
+.btn-excluir {
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+    border-radius: 0.5rem;
+    color: white;
+    flex-shrink: 0;
+    box-sizing: border-box; /* Adicionado */
+}
+
+.btn-editar {
+    background: #28a745;
+}
+
+.btn-editar:hover {
+    background: #218838;
+    transform: translateY(-1px);
+}
+
+.btn-excluir {
+    background: #dc3545;
+}
+
+.btn-excluir:hover {
+    background: #c82333;
+    transform: translateY(-1px);
+}
+
+/* Ajustes responsivos */
+@media (max-width: 640px) {
+    .form-adicionar-tarefa {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    form.form-adicionar-tarefa button {
+        width: 100%;
+    }
 }
