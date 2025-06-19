@@ -1,71 +1,47 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TaskMaster Simples</title>
-    <link rel="stylesheet" href="/styles.css">
-</head>
-<body>
-    <h1>Minhas Tarefas</h1>
+<%- include('partials/header.ejs'); -%>
 
-    <div class="lista-tarefas">
-        <% if (listaDeTarefas.length > 0) { %>
-            <ul>
-                <% listaDeTarefas.forEach(function(tarefa) { %>
-                    <li>
-                        <!-- Área da Descrição da Tarefa -->
-                        <div class="task-description-area">
-                            <!-- AGORA É UM TEXTAREA! -->
-                            <textarea name="novaDescricao" class="input-edicao" readonly form="edit-form-<%= tarefa.id %>"><%= tarefa.descricao %></textarea>
-                        </div>
+  <div class="box" id="heading">
+    <h1>
+      <%= listTitle %>
+    </h1>
+  </div>
+  <div class="box">
+    <% for(let item of listItems){%>
+      <div class="item">
+       
+        <form action="/delete" method="POST" style="display: inline;">
+  <button type="submit" name="deleteItemId" value="<%= item.id %>" style="background: none; border: none; cursor: pointer;">
+    <img src="/assets/icons//lixo.svg" alt="Excluir" width="24" height="24">
+  </button>
+</form>
+        <p id="title<%=item.id%>">
+          <%= item.title %>
+        </p>
 
-                        <!-- Container para os botões de Ação (Editar e Excluir) -->
-                        <div class="task-actions">
-                            <!-- Formulário para Editar Tarefa -->
-                            <form id="edit-form-<%= tarefa.id %>" action="/atualizar-tarefa" method="POST" class="form-editar">
-                                <input type="hidden" name="idTarefa" value="<%= tarefa.id %>">
-                                <button type="submit" class="btn-editar">Editar</button>
-                            </form>
+        <form class="edit" action="/edit" method="post">
+          <input type="hidden" name="updatedItemId" value="<%= item.id %>">
+          <input id="input<%=item.id%>" type="text" name="updatedItemTitle" value="<%= item.title %>" autocomplete="off"
+            autofocus="true" hidden="true" />
+          <button id="done<%=item.id%>" class="edit" type="submit" hidden><img class="icon"
+              src="/assets/icons/check-solid.svg" alt="tick image"></button>
+        </form>
+        <button id="edit<%=item.id%>" class="edit" onclick="handler('<%=item.id%>')"><img class="icon"
+            src="/assets/icons/pencil-solid.svg" alt="pencil image"></button>
+      </div>
+      <% } %>
 
-                            <!-- Formulário para Excluir Tarefa -->
-                            <form action="/excluir-tarefa" method="POST" class="form-excluir">
-                                <input type="hidden" name="idTarefa" value="<%= tarefa.id %>">
-                                <button type="submit" class="btn-excluir">Excluir</button>
-                            </form>
-                        </div>
-                    </li>
-                <% }); %>
-            </ul>
-        <% } else { %>
-            <p>Nenhuma tarefa cadastrada ainda. Adicione uma!</p>
-        <% } %>
-    </div>
+        <form class="item" action="/add" method="post">
+          <input type="text" name="newItem" placeholder="New Item" autocomplete="off" autofocus="true" />
+          <button class="add" type="submit" name="list" value=<%=listTitle %> >+</button>
+        </form>
+  </div>
 
-    <!-- Formulário para adicionar nova tarefa (fora da lista de tarefas) -->
-    <form action="/adicionar-tarefa" method="POST" class="form-adicionar-tarefa">
-        <input type="text" name="novaTarefa" placeholder="Digite uma nova tarefa" required>
-        <button type="submit">Adicionar</button>
-    </form>
-
-    <!-- Script JavaScript para lidar com o modo de edição (Mantido, funciona com textarea) -->
-    <script>
-        document.querySelectorAll('.btn-editar').forEach(button => {
-            button.addEventListener('click', (event) => {
-                const form = button.closest('.form-editar');
-                const taskId = form.querySelector('input[name="idTarefa"]').value;
-                const inputEdicao = document.querySelector(`.input-edicao[form="edit-form-${taskId}"]`);
-
-                if (button.textContent === 'Editar') {
-                    event.preventDefault();
-                    inputEdicao.removeAttribute('readonly');
-                    inputEdicao.focus();
-                    button.textContent = 'Salvar';
-                } else {
-                    // O formulário será enviado automaticamente
-                }
-            });
-        });
-    </script>
-</body>
-</html>
+  <script>
+    function handler(id) {
+      document.getElementById("title" + id).setAttribute("hidden", true)
+      document.getElementById("edit" + id).setAttribute("hidden", true)
+      document.getElementById("done" + id).removeAttribute("hidden")
+      document.getElementById("input" + id).removeAttribute("hidden")
+    }
+  </script>
+  <%- include('partials/footer.ejs'); -%>
