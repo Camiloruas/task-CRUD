@@ -1,2 +1,5 @@
 .env
 node_modules/
+public/assets/
+public/styles/
+views/partials/
