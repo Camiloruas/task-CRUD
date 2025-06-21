@@ -37,7 +37,7 @@ app.get("/", async (req, res) => {
     const resultado = await db.query("SELECT * FROM items ORDER BY id ASC ");
     const listItems = resultado.rows;
     res.render("index.ejs", {
-      listTitle: "Today",
+      listTitle: "Hoje",
       listItems: listItems,
     });
   } catch (erro) {
