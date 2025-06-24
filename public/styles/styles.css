@@ -1,6 +1,9 @@
 html {
   background-color: #e4e9fd;
-  /* background-image: linear-gradient(120deg, #a683e3 50%, #e4e9fd 50%); */
+  background-image: url("../assets/icons/assets/icons/fundo_app.png");
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
   min-height: 1000px;
   font-family: "helvetica neue";
 }
