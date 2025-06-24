@@ -22,20 +22,30 @@
           <input type="hidden" name="updatedItemId" value="<%= item.id %>">
           <input id="input<%=item.id%>" type="text" name="updatedItemTitle" value="<%= item.title %>" autocomplete="off"
             autofocus="true" hidden="true" />
-          <button id="done<%=item.id%>" class="edit" type="submit" hidden><img class="icon"
-              src="/assets/icons/check-solid.svg" alt="tick image"></button>
-        </form>
-        <button id="edit<%=item.id%>" class="edit" onclick="handler('<%=item.id%>')"><img class="icon"
-            src="/assets/icons/pencil-solid.svg" alt="pencil image"></button>
-      </div>
+          <button id="done<%=item.id%>" class="edit" type="submit" hidden style="cursor: pointer;">
+            <img class="icon" src="/assets/icons/check-solid.svg" alt="tick image">
+          </button>
+          </form>
+        <button id="edit<%=item.id%>" class="edit" onclick="handler('<%=item.id%>')" style="cursor: pointer;">
+          <img class="icon" src="/assets/icons/pencil-solid.svg" alt="pencil image">
+        </button>
+        </div>
       <% } %>
 
         <form class="item" action="/add" method="post">
           <input type="text" name="newItem" placeholder="New Item" autocomplete="off" autofocus="true" />
-          <button class="add" type="submit" name="list" value=<%=listTitle %> >+</button>
+          <button class="add" type="submit" name="list" value="<%=listTitle %>" style="cursor: pointer;">+</button>
         </form>
   </div>
 
+  <div style="text-align: right; margin: 20px;">
+    <form action="/logout" method="POST" style="display: inline;">
+      <button type="submit" style="background: #f44336; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer;">
+        Logout
+      </button>
+    </form>
+  </div>
+  
   <script>
     function handler(id) {
       document.getElementById("title" + id).setAttribute("hidden", true)
