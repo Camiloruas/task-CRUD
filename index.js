@@ -1,33 +1,35 @@
 import express from "express";
 import bodyParser from "body-parser";
 import pg from "pg";
-import bcrypt from "bcrypt"; // Para hashing de senhas
-import passport from "passport"; // Para autenticação
-import { Strategy } from "passport-local"; // Estratégia de autenticação local (usuário/senha)
-import session from "express-session"; // Para gerenciar sessões
-import 'dotenv/config'; // Para carregar variáveis de ambiente
-import path from "path"; // Para manipulação de caminhos de arquivo
+import bcrypt from "bcrypt";
+import passport from "passport";
+import { Strategy } from "passport-local";
+import session from "express-session";
+import 'dotenv/config';
+import path from "path";
+import GoogleStrategy from "passport-google-oauth2"; // Importação correta do GoogleStrategy
+
+// import { access } from "fs"; // Esta importação não está sendo usada, pode ser removida
 
 const app = express();
-const port = 3333;
-const saltRounds = 10; // Número de rounds para o hashing do bcrypt (quanto maior, mais seguro, mas mais lento)
+const port = 3000;
+const saltRounds = 10;
 
 // --- Configuração de Middleware ---
 app.use(session({
-    secret: process.env.SESSION_SECRET, // Chave secreta para assinar o cookie de sessão (do .env)
-    resave: false, // Impede que a sessão seja salva novamente no armazenamento se não foi modificada
-    saveUninitialized: true, // Salva sessões novas, mas não inicializadas
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: true,
     cookie: {
-        maxAge: 1000 * 60 * 60 * 24 // Duração do cookie da sessão: 1 dia (em milissegundos)
+        maxAge: 1000 * 60 * 60 * 24
     }
 }));
 
 app.set('view engine', 'ejs');
-app.set('views', path.join(process.cwd(), 'views')); // Garante que o diretório 'views' seja encontrado corretamente
+app.set('views', path.join(process.cwd(), 'views'));
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(express.static("public")); // Para servir arquivos estáticos (CSS, JS, imagens)
+app.use(express.static("public"));
 
-// Inicializa o Passport e a sessão do Passport
 app.use(passport.initialize());
 app.use(passport.session());
 
@@ -40,26 +42,22 @@ const db = new pg.Client({
     port: process.env.DB_PORT,
 });
 
-db.connect(); // Conecta ao banco de dados
+db.connect();
 
 // --- Rotas da Aplicação ---
 
-// Rota para a página inicial (landing page)
 app.get("/", (req, res) => {
     res.render("home.ejs");
 });
 
-// Rota para exibir o formulário de login
 app.get("/login", (req, res) => {
     res.render("login.ejs");
 });
 
-// Rota para exibir o formulário de registro
 app.get("/register", (req, res) => {
     res.render("register.ejs");
 });
 
-// Rota POST para processar o logout do usuário
 app.post("/logout", (req, res, next) => {
     req.logout(function (err) {
         if (err) {
@@ -70,11 +68,10 @@ app.post("/logout", (req, res, next) => {
     });
 });
 
-// Rota PROTEGIDA para o Dashboard (sua lista de tarefas) - AGORA FILTRANDO POR user_id
+// Rota PROTEGIDA para o Dashboard (sua lista de tarefas)
 app.get("/dashboard", async (req, res) => {
     if (req.isAuthenticated()) {
         try {
-            // Consulta APENAS as tarefas associadas ao user_id do usuário logado
             const resultado = await db.query("SELECT * FROM items WHERE user_id = $1 ORDER BY id ASC", [req.user.id]);
             const listItems = resultado.rows;
 
@@ -91,9 +88,20 @@ app.get("/dashboard", async (req, res) => {
     }
 });
 
+// Rota para iniciar a autenticação com Google
+app.get("/auth/google", passport.authenticate("google", {
+    scope: ["profile", "email"], // Define quais informações estamos pedindo ao Google
+}));
+
+// Rota de Callback do Google OAuth (para onde o Google redireciona após a autenticação)
+app.get("/auth/google/secrets", passport.authenticate("google", {
+    successRedirect: "/dashboard", // Se a autenticação for bem-sucedida, redireciona para o dashboard
+    failureRedirect: "/login",     // Se falhar, redireciona para o login
+}));
+
+
 // --- Rotas POST para Autenticação ---
 
-// Rota POST para processar o registro de novos usuários
 app.post("/register", async (req, res) => {
     const { username, password } = req.body;
 
@@ -125,14 +133,15 @@ app.post("/register", async (req, res) => {
     }
 });
 
-// Rota POST para processar o login
 app.post("/login", passport.authenticate("local", {
     successRedirect: "/dashboard",
     failureRedirect: "/login",
 }));
 
+
 // --- Configuração da Estratégia de Autenticação do Passport ---
 
+// Estratégia Local (username/password)
 passport.use(new Strategy(async function verify(username, password, cb) {
     try {
         const result = await db.query("SELECT * FROM users WHERE username = $1", [username]);
@@ -152,12 +161,61 @@ passport.use(new Strategy(async function verify(username, password, cb) {
     }
 }));
 
+// Estratégia Google OAuth2
+passport.use("google", new GoogleStrategy({
+    clientID: process.env.GOOGLE_CLIENT_ID, // Usando variável de ambiente
+    clientSecret: process.env.GOOGLE_CLIENT_SECRET, // Usando variável de ambiente
+    callbackURL: process.env.GOOGLE_CALLBACK_URL, // Usando variável de ambiente
+    userProfileURL: "https://www.googleapis.com/oauth2/v3/userinfo", // URL para obter informações do perfil
+}, async (accessToken, refreshToken, profile, cb) => {
+    // ESTA É A LÓGICA PRINCIPAL PARA O GOOGLE OAUTH
+    // 1. Verifique se o usuário já existe no seu DB com este Google ID
+    // 2. Se existir, chame cb(null, userExistente);
+    // 3. Se não existir, crie um novo usuário no seu DB usando os dados do 'profile'
+    //    (ex: profile.id, profile.displayName, profile.emails[0].value)
+    // 4. Salve o Google ID na sua tabela 'users' para futuras verificações
+    // 5. Chame cb(null, novoUsuarioCriado);
+
+    console.log(profile); // Você pode ver o objeto 'profile' no console do seu terminal
+
+    try {
+        // Exemplo: Verifique se o usuário já existe pelo Google ID
+        // Você precisará adicionar uma coluna 'google_id' à sua tabela 'users'
+        // ALTER TABLE users ADD COLUMN google_id VARCHAR(255) UNIQUE;
+        const checkResult = await db.query("SELECT * FROM users WHERE google_id = $1", [profile.id]);
+
+        if (checkResult.rows.length > 0) {
+            // Usuário do Google já existe no seu DB, loga ele
+            return cb(null, checkResult.rows[0]);
+        } else {
+            // Usuário do Google não existe, cria um novo usuário no seu DB
+            const newUser = await db.query(
+                "INSERT INTO users (username, password, google_id, email) VALUES ($1, $2, $3, $4) RETURNING *",
+                [
+                    profile.displayName, // Ou profile.name.givenName
+                    "google-auth", // Senha dummy, pois o login é via Google
+                    profile.id,
+                    profile.emails && profile.emails.length > 0 ? profile.emails[0].value : null // Pega o primeiro email se existir
+                ]
+            );
+            return cb(null, newUser.rows[0]);
+        }
+    } catch (err) {
+        console.error("Erro na estratégia Google OAuth:", err);
+        return cb(err);
+    }
+}));
+
+
 passport.serializeUser((user, cb) => {
+    // Você pode serializar pelo ID do seu DB ou pelo Google ID,
+    // mas para manter a consistência, o ID do seu DB é melhor.
     cb(null, user.id);
 });
 
 passport.deserializeUser(async (id, cb) => {
     try {
+        // Busca o usuário pelo ID do seu DB
         const result = await db.query("SELECT * FROM users WHERE id = $1", [id]);
         if (result.rows.length > 0) {
             const user = result.rows[0];
@@ -173,16 +231,14 @@ passport.deserializeUser(async (id, cb) => {
 
 // --- Rotas POST para Operações CRUD (Protegidas por user_id) ---
 
-// Rota POST para adicionar uma nova tarefa
 app.post("/add", async (req , res)=> {
     if (!req.isAuthenticated()) {
         return res.redirect("/login");
     }
     const item = req.body.newItem;
-    const userId = req.user.id; // Obtém o ID do usuário logado
+    const userId = req.user.id;
 
     try{
-        // Insere a nova tarefa associada ao user_id logado
         await db.query("INSERT INTO items (title, user_id) VALUES ($1, $2)", [item, userId]);
         res.redirect("/dashboard");
     } catch(erro) {
@@ -191,17 +247,15 @@ app.post("/add", async (req , res)=> {
     }
 });
 
-// Rota POST para editar uma tarefa existente
 app.post("/edit", async (req , res)=> {
     if (!req.isAuthenticated()) {
         return res.redirect("/login");
     }
     const idAtualizar = req.body.updatedItemId;
     const newDescription = req.body.updatedItemTitle;
-    const userId = req.user.id; // Obtém o ID do usuário logado
+    const userId = req.user.id;
 
     try{
-        // Atualiza a tarefa APENAS se ela pertencer ao user_id logado
         await db.query("UPDATE items SET title = $1 WHERE id = $2 AND user_id = $3;", [newDescription, idAtualizar, userId]);
         res.redirect("/dashboard");
     }
@@ -211,16 +265,14 @@ app.post("/edit", async (req , res)=> {
     }
 });
 
-// Rota POST para deletar uma tarefa
 app.post("/delete", async (req , res)=> {
     if (!req.isAuthenticated()) {
         return res.redirect("/login");
     }
     const idDelete = req.body.deleteItemId;
-    const userId = req.user.id; // Obtém o ID do usuário logado
+    const userId = req.user.id;
 
     try{
-        // Deleta a tarefa APENAS se ela pertencer ao user_id logado
         await db.query("DELETE FROM items WHERE id = $1 AND user_id = $2;", [idDelete, userId]);
         res.redirect("/dashboard");
     } catch(erro) {
@@ -229,7 +281,6 @@ app.post("/delete", async (req , res)=> {
     }
 });
 
-// Inicia o servidor
 app.listen(port, () => {
   console.log(`Servidor rodando na porta ${port}`);
 });
