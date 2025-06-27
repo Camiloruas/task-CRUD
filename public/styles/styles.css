@@ -75,6 +75,7 @@ button.add {
   color: #fff;
   font-size: 30px;
   border-width: 0;
+  cursor: pointer;
 }
 
 button.edit {
@@ -82,10 +83,23 @@ button.edit {
   margin-right: 20px;
   border: none;
   background: none;
+  cursor: pointer;
 }
 
 .icon {
   height: 20px;
+}
+
+.delete-form {
+  display: inline;
+}
+
+.delete-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  margin-right: 20px;
 }
 
 input[type="text"] {
@@ -113,4 +127,26 @@ footer {
   flex: 0 0 auto;
   color: rgb(41, 18, 171);
   text-align: center;
+}
+
+.logout-container {
+  text-align: center;
+  margin: 20px;
+}
+
+.logout-form {
+  display: inline;
+}
+
+.logout-button {
+  background: #f44336;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.edit-pencil-button {
+  margin-left: auto;
 }
