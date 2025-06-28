@@ -4,6 +4,14 @@
     <h1>
       <%= listTitle %>
     </h1>
+    <% if (user && user.username) { %>
+      <div class="user-info">
+        <% if (user.picture) { %>
+          <img src="<%= user.picture %>" alt="User Profile Picture" class="profile-picture">
+        <% } %>
+        <span class="user-name">Bem-vindo, <%= user.username %>!</span>
+      </div>
+    <% } %>
   </div>
   <div class="box">
     <% for(let item of listItems){%>

@@ -76,6 +76,7 @@ app.get("/dashboard", async (req, res) => {
             const listItems = resultado.rows;
 
             res.render("index.ejs", {
+                user: req.user, // Passa o objeto do usuário para o template
                 listTitle: "Minhas Tarefas",
                 listItems: listItems,
             });
@@ -163,39 +164,34 @@ passport.use(new Strategy(async function verify(username, password, cb) {
 
 // Estratégia Google OAuth2
 passport.use("google", new GoogleStrategy({
-    clientID: process.env.GOOGLE_CLIENT_ID, // Usando variável de ambiente
-    clientSecret: process.env.GOOGLE_CLIENT_SECRET, // Usando variável de ambiente
-    callbackURL: process.env.GOOGLE_CALLBACK_URL, // Usando variável de ambiente
-    userProfileURL: "https://www.googleapis.com/oauth2/v3/userinfo", // URL para obter informações do perfil
+    clientID: process.env.GOOGLE_CLIENT_ID,
+    clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+    callbackURL: process.env.GOOGLE_CALLBACK_URL,
+    userProfileURL: "https://www.googleapis.com/oauth2/v3/userinfo",
 }, async (accessToken, refreshToken, profile, cb) => {
-    // ESTA É A LÓGICA PRINCIPAL PARA O GOOGLE OAUTH
-    // 1. Verifique se o usuário já existe no seu DB com este Google ID
-    // 2. Se existir, chame cb(null, userExistente);
-    // 3. Se não existir, crie um novo usuário no seu DB usando os dados do 'profile'
-    //    (ex: profile.id, profile.displayName, profile.emails[0].value)
-    // 4. Salve o Google ID na sua tabela 'users' para futuras verificações
-    // 5. Chame cb(null, novoUsuarioCriado);
-
-    console.log(profile); // Você pode ver o objeto 'profile' no console do seu terminal
-
     try {
-        // Exemplo: Verifique se o usuário já existe pelo Google ID
-        // Você precisará adicionar uma coluna 'google_id' à sua tabela 'users'
-        // ALTER TABLE users ADD COLUMN google_id VARCHAR(255) UNIQUE;
         const checkResult = await db.query("SELECT * FROM users WHERE google_id = $1", [profile.id]);
 
         if (checkResult.rows.length > 0) {
-            // Usuário do Google já existe no seu DB, loga ele
-            return cb(null, checkResult.rows[0]);
+            // Usuário do Google já existe no seu DB, atualiza nome e foto e loga ele
+            const user = checkResult.rows[0];
+            await db.query(
+                "UPDATE users SET username = $1, picture = $2 WHERE google_id = $3",
+                [profile.displayName, profile.photos && profile.photos.length > 0 ? profile.photos[0].value : null, profile.id]
+            );
+            // Retorna o usuário atualizado
+            const updatedUserResult = await db.query("SELECT * FROM users WHERE google_id = $1", [profile.id]);
+            return cb(null, updatedUserResult.rows[0]);
         } else {
             // Usuário do Google não existe, cria um novo usuário no seu DB
             const newUser = await db.query(
-                "INSERT INTO users (username, password, google_id, email) VALUES ($1, $2, $3, $4) RETURNING *",
+                "INSERT INTO users (username, password, google_id, email, picture) VALUES ($1, $2, $3, $4, $5) RETURNING *",
                 [
-                    profile.displayName, // Ou profile.name.givenName
-                    "google-auth", // Senha dummy, pois o login é via Google
+                    profile.displayName,
+                    "google-auth",
                     profile.id,
-                    profile.emails && profile.emails.length > 0 ? profile.emails[0].value : null // Pega o primeiro email se existir
+                    profile.emails && profile.emails.length > 0 ? profile.emails[0].value : null,
+                    profile.photos && profile.photos.length > 0 ? profile.photos[0].value : null
                 ]
             );
             return cb(null, newUser.rows[0]);

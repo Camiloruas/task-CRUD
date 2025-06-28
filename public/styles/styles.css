@@ -1,23 +1,23 @@
 html {
   background-color: #e4e9fd;
-  background-image: url("../assets/icons/assets/icons/fundo_app.png");
-  background-size: cover;
-  background-repeat: no-repeat;
+  /* background-image: url("../assets/icons/assets/icons/fundo_app.png"); */
+  /* background-size: cover; */
+  /* background-repeat: no-repeat; */
   background-position: center;
   min-height: 1000px;
   font-family: "helvetica neue";
-}
+} 
 body {
   display: flex;
   flex-direction: column;
   justify-content: stretch;
-  min-height: 95vh;
+  min-height: 100vh;
 }
 main {
   text-align: center;
   flex: 1 0 auto;
 }
-h1 {
+#heading h1 {
   color: #fff;
   padding: 10px;
 }
@@ -59,6 +59,10 @@ p {
   padding: 20px 0;
   font-size: 20px;
   color: #00204a;
+}
+
+.item > p {
+  flex-grow: 1;
 }
 
 form {
@@ -149,4 +153,153 @@ footer {
 
 .edit-pencil-button {
   margin-left: auto;
+}
+
+.home-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+}
+
+.home-card {
+    background: white;
+    padding: 40px;
+    border-radius: 10px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+.home-card h1 {
+    color: #00204a;
+}
+
+.home-buttons {
+    margin-top: 20px;
+}
+
+.home-buttons .btn {
+    margin: 0 10px;
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 10px;
+    color: #fff;
+}
+
+.profile-picture {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    margin-right: 10px;
+    border: 2px solid #fff;
+}
+
+.user-name {
+    font-size: 1.1em;
+    font-weight: bold;
+}
+
+/* --- Media Queries for Responsiveness --- */
+
+@media (max-width: 768px) {
+  .box {
+    max-width: 90%;
+    margin: 30px auto;
+  }
+
+  .item {
+    flex-direction: row; /* Keep as row */
+    justify-content: space-between; /* Distribute items */
+    align-items: center; /* Vertically align */
+    padding: 10px 5px; /* Adjust padding */
+  }
+
+  .item > p {
+    padding: 0 5px; /* Adjust padding */
+    font-size: 18px;
+    text-align: left; /* Align text left */
+    flex-grow: 1; /* Allow text to grow */
+    white-space: nowrap; /* Prevent text wrapping */
+    overflow: hidden; /* Hide overflow */
+    text-overflow: ellipsis; /* Add ellipsis for overflow */
+  }
+
+  .delete-form, form {
+    margin-left: 0;
+    width: auto; /* Auto width */
+    display: flex;
+    justify-content: flex-end; /* Align buttons to the end */
+  }
+
+  .delete-button, button.edit {
+    margin: 0 5px; /* Adjust margin */
+  }
+
+  input[type="text"] {
+    width: 100%; /* Full width within its container */
+    max-width: 200px; /* Limit max width */
+    font-size: 18px;
+  }
+
+  button.add {
+    min-height: 40px;
+    width: 40px;
+    font-size: 24px;
+  }
+
+  .home-card {
+    padding: 20px;
+    margin: 0 10px;
+  }
+
+  .home-card h1 {
+    font-size: 2em;
+  }
+
+  .home-buttons .btn {
+    display: block;
+    margin: 10px auto;
+    width: 80%;
+  }
+
+  .user-info {
+    flex-direction: column;
+    margin-top: 5px;
+  }
+
+  .profile-picture {
+    margin-right: 0;
+    margin-bottom: 5px;
+  }
+
+  .user-name {
+    font-size: 1em;
+  }
+}
+
+@media (max-width: 480px) {
+  .box {
+    margin: 20px auto;
+  }
+
+  .item > p {
+    font-size: 16px;
+  }
+
+  input[type="text"] {
+    font-size: 16px;
+    max-width: 150px; /* Further limit max width for very small screens */
+  }
+
+  .home-card h1 {
+    font-size: 1.5em;
+  }
+
+  .home-buttons .btn {
+    width: 90%;
+  }
 }

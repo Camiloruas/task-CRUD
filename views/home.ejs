@@ -1,16 +1,16 @@
 <%- include('partials/header') %>
 
-
-<div class="jumbotron centered">
-  <div class="container">
-    <i class="fas fa-key fa-6x"></i>
+<main class="home-container">
+  <div class="home-card">
+    <i class="fas fa-clipboard-list fa-6x"></i>
     <h1 class="display-3">Lembretes</h1>
-    <p class="lead">Anote aqui suas tarefas diárias </p>
-    <hr>
-    <a class="btn btn-light btn-lg" href="/register" role="button">Register</a>
-    <a class="btn btn-dark btn-lg" href="/login" role="button">Login</a>
-
+    <p class="lead">Anote aqui suas tarefas diárias.</p>
+    <div class="home-buttons">
+      <a class="btn btn-info btn-lg" href="/register" role="button">Registrar</a>
+      <a class="btn btn-dark btn-lg" href="/login" role="button">Login</a>
+    </div>
   </div>
-</div>
+</main>
 
 <%- include('partials/footer') %>
+
