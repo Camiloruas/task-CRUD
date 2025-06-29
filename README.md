@@ -6,7 +6,7 @@ Um simples gerenciador de tarefas (CRUD - Create, Read, Update, Delete) com aute
 
 Este projeto é uma aplicação web desenvolvida para permitir que os usuários se registrem, façam login e gerenciem suas próprias listas de tarefas. A aplicação oferece tanto a autenticação local (email e senha) quanto a autenticação via Google.
 
-**Acesse a aplicação em produção:** [https://task-crud-camilo-70504f57f090.herokuapp.com/](https://task-crud-camilo-70504f57f090.herokuapp.com/)
+**Acesse a aplicação em produção aqui:**   [Gerenciador de Tarefas](https://task-crud-camilo-70504f57f090.herokuapp.com/)
 
 ## Funcionalidades
 
