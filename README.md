@@ -65,3 +65,24 @@ Este projeto é uma aplicação web desenvolvida para permitir que os usuários 
     npm start
     ```
     A aplicação estará disponível em `http://localhost:3000`.
+
+---
+
+##  Status do Projeto
+
+ Finalizado — projeto concluído como parte do processo de aprendizado. Futuras melhorias poderão ser aplicadas conforme o progresso nos estudos.
+
+---
+
+##  Contribuindo
+
+Este é um projeto pessoal de aprendizado, mas sugestões são sempre bem-vindas!
+Se você tiver alguma ideia de melhoria, identificar um erro ou quiser dar um feedback, sinta-se à vontade para registrar um comentário na aba Issues do repositório.
+
+---
+
+##  Autor
+
+**Camilo Ruas**  
+🔗 [GitHub: @Camiloruas](https://github.com/Camiloruas)  
+🔗 [LinkedIn](https://www.linkedin.com/in/camilo-ruas-3a2a6425/)
