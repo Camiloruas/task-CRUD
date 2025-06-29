@@ -1,64 +1,98 @@
 <%- include('partials/header.ejs'); -%>
 
-  <div class="box" id="heading">
-    <h1>
-      <%= listTitle %>
-    </h1>
-    <% if (user && user.username) { %>
-      <div class="user-info">
-        <% if (user.picture) { %>
-          <img src="<%= user.picture %>" alt="User Profile Picture" class="profile-picture">
-        <% } %>
-        <span class="user-name">Bem-vindo, <%= user.username %>!</span>
-      </div>
+<div class="box" id="heading">
+  <h1><%= listTitle %></h1>
+  <% if (user && user.username) { %>
+  <div class="user-info">
+    <% if (user.picture) { %>
+    <img
+      src="<%= user.picture %>"
+      alt="User Profile Picture"
+      class="profile-picture"
+    />
     <% } %>
+    <span class="user-name">Bem-vindo, <%= user.username %>!</span>
   </div>
-  <div class="box">
-    <% for(let item of listItems){%>
-      <div class="item">
-       
-        <form action="/delete" method="POST" class="delete-form">
-          <button type="submit" name="deleteItemId" value="<%= item.id %>" class="delete-button">
-            <img src="/assets/icons//lixo.svg" alt="Excluir" width="24" height="24">
-          </button>
-        </form>
-        <p id="title<%=item.id%>">
-          <%= item.title %>
-        </p>
-
-        <form class="edit" action="/edit" method="post">
-          <input type="hidden" name="updatedItemId" value="<%= item.id %>">
-          <input id="input<%=item.id%>" type="text" name="updatedItemTitle" value="<%= item.title %>" autocomplete="off"
-            autofocus="true" hidden="true" />
-          <button id="done<%=item.id%>" class="edit" type="submit" hidden>
-            <img class="icon" src="/assets/icons/check-solid.svg" alt="tick image">
-          </button>
-          </form>
-        <button id="edit<%=item.id%>" class="edit edit-pencil-button" onclick="handler('<%=item.id%>')">
-            <img class="icon" src="/assets/icons/pencil-solid.svg" alt="pencil image">
-          </button>
-        </div>
-      <% } %>
-        <form class="item" action="/add" method="post">
-          <input type="text" name="newItem" placeholder="New Item" autocomplete="off" autofocus="true" />
-          <button class="add" type="submit" name="list" value="<%=listTitle %>">+</button>
-        </form>
-  </div>
-
-  <div class="logout-container">
-    <form action="/logout" method="POST" class="logout-form">
-      <button type="submit" class="logout-button">
-        Logout
+  <% } %>
+</div>
+<div class="box">
+  <% for(let item of listItems){%>
+  <div class="item">
+    <form action="/delete" method="POST" class="delete-form">
+      <button
+        type="submit"
+        name="deleteItemId"
+        value="<%= item.id %>"
+        class="delete-button"
+      >
+        <img
+          src="/assets/icons/lixo.svg"
+          alt="Excluir"
+          width="24"
+          height="24"
+        />
       </button>
     </form>
+    <p id="title<%=item.id%>"><%= item.title %></p>
+
+    <form class="edit" action="/edit" method="post">
+      <input type="hidden" name="updatedItemId" value="<%= item.id %>" />
+      <input
+        id="input<%=item.id%>"
+        type="text"
+        name="updatedItemTitle"
+        value="<%= item.title %>"
+        autocomplete="off"
+        autofocus="true"
+        hidden="true"
+      />
+      <button id="done<%=item.id%>" class="edit" type="submit" hidden>
+        <img
+          class="icon"
+          src="/assets/icons/check-solid.svg"
+          alt="tick image"
+        />
+      </button>
+    </form>
+    <button
+      id="edit<%=item.id%>"
+      class="edit edit-pencil-button"
+      onclick="handler('<%=item.id%>')"
+    >
+      <img
+        class="icon"
+        src="/assets/icons/pencil-solid.svg"
+        alt="pencil image"
+      />
+    </button>
   </div>
-  
-  <script>
-    function handler(id) {
-      document.getElementById("title" + id).setAttribute("hidden", true)
-      document.getElementById("edit" + id).setAttribute("hidden", true)
-      document.getElementById("done" + id).removeAttribute("hidden")
-      document.getElementById("input" + id).removeAttribute("hidden")
-    }
-  </script>
-  <%- include('partials/footer.ejs'); -%>
+  <% } %>
+  <form class="item" action="/add" method="post">
+    <input
+      type="text"
+      name="newItem"
+      placeholder="New Item"
+      autocomplete="off"
+      autofocus="true"
+    />
+    <button class="add" type="submit" name="list" value="<%=listTitle %>">
+      +
+    </button>
+  </form>
+</div>
+
+<div class="logout-container">
+  <form action="/logout" method="POST" class="logout-form">
+    <button type="submit" class="logout-button">Logout</button>
+  </form>
+</div>
+
+<script>
+  function handler(id) {
+    document.getElementById("title" + id).setAttribute("hidden", true);
+    document.getElementById("edit" + id).setAttribute("hidden", true);
+    document.getElementById("done" + id).removeAttribute("hidden");
+    document.getElementById("input" + id).removeAttribute("hidden");
+  }
+</script>
+<%- include('partials/footer.ejs'); -%>
