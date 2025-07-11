@@ -228,7 +228,7 @@ footer {
     text-overflow: ellipsis; /* Add ellipsis for overflow */
   }
 
-  .delete-form, form {
+  .delete-form, form:not(.auth-form) {
     margin-left: 0;
     width: auto; /* Auto width */
     display: flex;
