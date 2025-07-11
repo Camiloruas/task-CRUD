@@ -322,8 +322,13 @@ app.post("/add", async (req, res) => {
     // Verifica se o usuário está autenticado.
     return res.redirect("/login"); // Se não, redireciona para o login.
   }
-  const item = req.body.newItem; // Pega o texto da nova tarefa do formulário.
+  const item = req.body.newItem.trim(); // Pega o texto da nova tarefa e remove espaços em branco.
   const userId = req.user.id; // Pega o ID do usuário logado.
+
+  // Validação no lado do servidor para impedir tarefas em branco.
+  if (!item) {
+    return res.redirect("/dashboard"); // Se o item estiver vazio, apenas redireciona.
+  }
 
   try {
     // Insere a nova tarefa no banco de dados, associando-a ao usuário.
