@@ -303,3 +303,8 @@ footer {
     width: 90%;
   }
 }
+
+.extra-margin-top {
+  margin-top: 10rem; /* Adjust this value as needed */
+}
+}
