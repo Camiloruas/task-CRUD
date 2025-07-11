@@ -1,8 +1,6 @@
 <%- include('partials/header') %>
-<div class="container mt-5">
-  <h1>Register</h1>
-
-  <div class="row">
+<div class="container-fluid d-flex flex-column vh-100">
+  <div class="row flex-grow-1 justify-content-center align-items-center">
     <div class="col-sm-8">
       <div class="card">
         <div class="card-body">
@@ -22,9 +20,6 @@
 
         </div>
       </div>
-      <div class="text-center mt-5 mb-5">
-        <a href="/" class="btn btn-secondary">Voltar</a>
-      </div>
     </div>
 
   <div class="col-sm-4">
@@ -39,6 +34,11 @@
       </div>
 
     </div>
-  </div>
+    <div class="row-fluid">
+      <div class="col-12 text-center mb-5">
+        <a href="/" class="btn btn-secondary">Voltar</a>
+      </div>
+    </div>
+</div>
 
 <%- include('partials/footer') %>
