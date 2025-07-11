@@ -9,7 +9,7 @@
     </div>
   <% } %>
 
-  <div class="row">
+  <div class="row justify-content-center">
     <div class="col-sm-8">
       <div class="card">
         <div class="card-body">
@@ -24,24 +24,25 @@
               <label for="password">Password</label>
               <input type="password" class="form-control" name="password">
             </div>
-            <button type="submit" class="btn btn-dark">Login</button>
+            <div class="text-center">
+              <button type="submit" class="btn btn-dark">Login</button>
+            </div>
           </form>
 
+          <div class="text-center my-3">
+            <p>Ou</p>
+          </div>
+
+          <div class="text-center">
+            <a class="btn btn-danger" href="/auth/google" role="button">
+              <i class="fab fa-google"></i>
+              Sign In with Google
+            </a>
+          </div>
+
         </div>
       </div>
     </div>
-
-    <div class="col-sm-4">
-      <div class="card">
-        <div class="card-body">
-          <a class="btn btn-block" href="/auth/google" role="button">
-            <i class="fab fa-google"></i>
-            Sign In with Google
-          </a>
-        </div>
-      </div>
-    </div>
-
   </div>
   <div class="text-center mt-5 mb-5 extra-margin-top">
     <a href="/" class="btn btn-secondary">Voltar</a>
