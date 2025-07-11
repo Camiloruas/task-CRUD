@@ -13,7 +13,7 @@ import flash from "connect-flash"; // Importa o connect-flash para exibir mensag
 const app = express(); // Cria uma instância do aplicativo Express.
 // Define a porta em que o servidor irá rodar.
 // Para o Heroku, usamos process.env.PORT. Localmente, voltamos para a porta 3000.
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 3000; // Ajustado para compatibilidade com Heroku
 const saltRounds = 10; // Define o número de "salt rounds" para o bcrypt, que afeta a complexidade da criptografia.
 
 // --- Configuração de Middleware ---
@@ -247,26 +247,32 @@ passport.use(
 
         if (checkResult.rows.length > 0) {
           // Se o usuário do Google já existe.
-          const user = checkResult.rows[0];
-          // Apenas atualiza a foto do perfil para manter o email como username principal.
-          await db.query("UPDATE users SET picture = $1 WHERE google_id = $2", [
-            profile.photos && profile.photos.length > 0
-              ? profile.photos[0].value
-              : null,
-            profile.id,
-          ]);
-          return cb(null, user); // Retorna o usuário existente.
-        } else {
-          // Se o usuário do Google não existe, cria um novo.
-          // Usa o email do Google como o 'username' para consistência com o login local.
-          const newUser = await db.query(
-            "INSERT INTO users (username, password, google_id, picture) VALUES ($1, $2, $3, $4) RETURNING *",
+          // Atualiza o nome, foto e email do usuário no banco de dados e RETORNA o usuário atualizado.
+          const updatedUserResult = await db.query(
+            "UPDATE users SET username = $1, picture = $2, email = $3 WHERE google_id = $4 RETURNING *",
             [
+              profile.displayName,
+              profile.photos && profile.photos.length > 0
+                ? profile.photos[0].value
+                : null,
               profile.emails && profile.emails.length > 0
                 ? profile.emails[0].value
-                : profile.id, // Usa o email como username, com fallback para o google_id.
+                : null,
+              profile.id,
+            ]
+          );
+          return cb(null, updatedUserResult.rows[0]);
+        } else {
+          // Se o usuário do Google não existe, cria um novo.
+          const newUser = await db.query(
+            "INSERT INTO users (username, password, google_id, email, picture) VALUES ($1, $2, $3, $4, $5) RETURNING *", // CORREÇÃO AQUI: Adicionado 'email'
+            [
+              profile.displayName, // Nome de exibição do Google.
               "google-auth", // Senha placeholder, já que a autenticação é via Google.
               profile.id, // ID do Google.
+              profile.emails && profile.emails.length > 0
+                ? profile.emails[0].value
+                : null, // Email do Google.
               profile.photos && profile.photos.length > 0
                 ? profile.photos[0].value
                 : null, // Foto do perfil do Google.
