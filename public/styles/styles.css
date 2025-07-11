@@ -307,4 +307,14 @@ footer {
 .extra-margin-top {
   margin-top: 10rem; /* Adjust this value as needed */
 }
+
+@media (max-width: 768px) {
+  .auth-card-container {
+    width: 95%;
+  }
+
+  .auth-card-container .btn {
+    width: 100%;
+  }
+}
 }
