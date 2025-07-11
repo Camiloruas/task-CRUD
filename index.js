@@ -150,6 +150,7 @@ app.post("/register", async (req, res) => {
 
     if (checkResult.rows.length > 0) {
       // Se o usuário já existe.
+      req.flash('error', 'Este email já está cadastrado. Por favor, faça login.');
       res.redirect("/login"); // Redireciona para a página de login.
     } else {
       // Se o usuário não existe.
