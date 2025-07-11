@@ -247,35 +247,26 @@ passport.use(
 
         if (checkResult.rows.length > 0) {
           // Se o usuário do Google já existe.
-          // Atualiza o nome e a foto do usuário no banco de dados.
           const user = checkResult.rows[0];
-          await db.query(
-            "UPDATE users SET username = $1, picture = $2 WHERE google_id = $3",
-            [
-              profile.displayName,
-              profile.photos && profile.photos.length > 0
-                ? profile.photos[0].value
-                : null,
-              profile.id,
-            ]
-          );
-          // Retorna o usuário atualizado para o Passport.
-          const updatedUserResult = await db.query(
-            "SELECT * FROM users WHERE google_id = $1",
-            [profile.id]
-          );
-          return cb(null, updatedUserResult.rows[0]);
+          // Apenas atualiza a foto do perfil para manter o email como username principal.
+          await db.query("UPDATE users SET picture = $1 WHERE google_id = $2", [
+            profile.photos && profile.photos.length > 0
+              ? profile.photos[0].value
+              : null,
+            profile.id,
+          ]);
+          return cb(null, user); // Retorna o usuário existente.
         } else {
           // Se o usuário do Google não existe, cria um novo.
+          // Usa o email do Google como o 'username' para consistência com o login local.
           const newUser = await db.query(
-            "INSERT INTO users (username, password, google_id, email, picture) VALUES ($1, $2, $3, $4, $5) RETURNING *",
+            "INSERT INTO users (username, password, google_id, picture) VALUES ($1, $2, $3, $4) RETURNING *",
             [
-              profile.displayName, // Nome de exibição do Google.
-              "google-auth", // Senha placeholder, já que a autenticação é via Google.
-              profile.id, // ID do Google.
               profile.emails && profile.emails.length > 0
                 ? profile.emails[0].value
-                : null, // Email do Google.
+                : profile.id, // Usa o email como username, com fallback para o google_id.
+              "google-auth", // Senha placeholder, já que a autenticação é via Google.
+              profile.id, // ID do Google.
               profile.photos && profile.photos.length > 0
                 ? profile.photos[0].value
                 : null, // Foto do perfil do Google.
